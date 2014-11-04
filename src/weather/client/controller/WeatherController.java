@@ -1,18 +1,22 @@
-package weather.client;
+package weather.client.controller;
 
 import java.io.ByteArrayInputStream;
 
 import java.io.InputStream;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
 import weather.entity.CurrentWeather;
 
 import net.webservicex.GlobalWeather;
 import net.webservicex.GlobalWeatherSoap;
 
+/**
+ * WeatherController - controller class for retrieving global weather data.
+ * 
+ * @author Suwijak Chaipipat 5510545046
+ * @version 4.11.2014
+ */
 public class WeatherController {
 	
 	private GlobalWeather gw;
@@ -23,6 +27,7 @@ public class WeatherController {
 	public WeatherController() {
 		gw = new GlobalWeather();
 		gwp = gw.getGlobalWeatherSoap();
+		
 		try {
 			ctx = JAXBContext.newInstance( CurrentWeather.class );
 			um = ctx.createUnmarshaller();
@@ -34,11 +39,7 @@ public class WeatherController {
 	public String getGlobalWeather(String cityName, String countryName) {
 		String weather = null;
 		
-		try {
-			weather = gwp.getWeather(cityName, countryName);
-		} catch ( javax.xml.ws.soap.SOAPFaultException ioe ) {
-			ioe.printStackTrace();
-		}
+		weather = gwp.getWeather(cityName, countryName);
 		
 		if ( weather.equals("Data Not Found") || weather == null )
 			return "Data Not Found";
@@ -52,7 +53,7 @@ public class WeatherController {
 		try {
 			cw = (CurrentWeather)um.unmarshal( instream );
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			return "Data Not Found";
 		}
 		
 		String out = "Location : " + cw.getLocation()
@@ -65,4 +66,5 @@ public class WeatherController {
 		
 		return out;
 	}
+	
 }

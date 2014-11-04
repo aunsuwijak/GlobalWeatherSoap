@@ -1,12 +1,16 @@
 package weather.entity;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * CurrentWeather - use for extracting xml file into object.
+ * 
+ * @author Suwijak Chaipipat 5510545046
+ * @version 4.11.2014
+ */
 @XmlRootElement(name="CurrentWeather")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CurrentWeather {

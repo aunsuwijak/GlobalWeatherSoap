@@ -120,6 +120,7 @@ public class WeatherUI extends JFrame implements Runnable {
 		
 		@Override
 		protected CurrentWeather doInBackground() throws Exception {
+			progressBar.setValue(0);
 			String cityName = cityField.getText().trim();
 			
 			String countryName = countryField.getText().trim();
@@ -143,7 +144,7 @@ public class WeatherUI extends JFrame implements Runnable {
 		@Override
 		protected void done() {
 			textArea.setText(weather);
-			progressBar.setValue(0);
+			progressBar.setValue(100);
 			super.done();
 		}
 		

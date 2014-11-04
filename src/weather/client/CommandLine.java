@@ -6,12 +6,12 @@ import weather.client.controller.WeatherController;
 
 
 /**
- * Main - start the program in command line.
+ * CommandLine - start the program in command line.
  * 
  * @author Suwijak Chaipipat 5510545046
  * @version 4.11.2014
  */
-public class Main {
+public class CommandLine {
 	
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);

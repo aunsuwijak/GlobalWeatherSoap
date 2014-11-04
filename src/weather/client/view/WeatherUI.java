@@ -127,8 +127,15 @@ public class WeatherUI extends JFrame implements Runnable {
 			
 			progressBar.setValue(15);
 			
-			if ( cityName.length() != 0 && countryName.length() != 0 ) 
-				weather = wc.getGlobalWeather(cityName, countryName);
+			if ( cityName.length() != 0 && countryName.length() != 0 ) {
+				try {
+					weather = wc.getGlobalWeather(cityName, countryName);
+				} catch ( WebServiceException wse ) {
+					weather = "No Internet Connection";
+					progressBar.setValue(0);
+					return null;
+				}
+			}
 			else if ( cityName.length() == 0 && countryName.length() != 0 )
 				weather = "City Field is Empty";
 			else if ( countryName.length() == 0 && cityName.length() != 0 )
@@ -138,13 +145,14 @@ public class WeatherUI extends JFrame implements Runnable {
 				
 			progressBar.setValue(75);
 			
+			progressBar.setValue(100);
+			
 			return null;
 		}
 
 		@Override
 		protected void done() {
 			textArea.setText(weather);
-			progressBar.setValue(100);
 			super.done();
 		}
 		

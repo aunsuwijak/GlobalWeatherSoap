@@ -3,6 +3,7 @@ package ku.weather.view;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -53,6 +54,9 @@ public class WeatherUI extends JFrame implements Runnable {
 		setPreferredSize(new Dimension(600,400));
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		setResizable(false);
+		
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		
 		initComponent();
 	}

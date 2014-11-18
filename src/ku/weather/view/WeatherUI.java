@@ -35,7 +35,6 @@ public class WeatherUI extends JFrame implements Runnable {
 
 	private WeatherController wc;
 	private Timer timer;
-	private boolean isTimeout;
 	private JTextField cityField;
 	private JTextField countryField;
 	private JLabel cityLabel;
@@ -52,7 +51,6 @@ public class WeatherUI extends JFrame implements Runnable {
 		setPreferredSize(new Dimension(600,400));
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		setResizable(false);
-		isTimeout = false;
 		
 		initComponent();
 	}
@@ -146,7 +144,7 @@ public class WeatherUI extends JFrame implements Runnable {
 			        JOptionPane.WARNING_MESSAGE, 
 			        null, 
 			        buttonText, // this is the array
-			        "default");
+			        "Retry");
 			if ( input == 0 ) 
 				this.setWeatherService();
 			else if ( input == 1 ) 
@@ -218,7 +216,6 @@ public class WeatherUI extends JFrame implements Runnable {
 			 timer = new Timer(timeout, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					isTimeout = true;
 					load.cancel(true);
 				}
 			});

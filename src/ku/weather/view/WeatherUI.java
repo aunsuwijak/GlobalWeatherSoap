@@ -169,7 +169,7 @@ public class WeatherUI extends JFrame implements Runnable {
 		
 		@Override
 		protected CurrentWeather doInBackground() throws Exception {
-			setTimeout(5000);
+			setTimeout(10000);
 			
 			progressBar.setValue(0);
 			
@@ -217,6 +217,7 @@ public class WeatherUI extends JFrame implements Runnable {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					load.cancel(true);
+					JOptionPane.showMessageDialog(null, "System connection time out, please try again.");
 				}
 			});
 			timer.start();

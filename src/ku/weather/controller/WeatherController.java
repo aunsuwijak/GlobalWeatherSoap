@@ -1,4 +1,4 @@
-package weather.client.controller;
+package ku.weather.controller;
 
 import java.io.ByteArrayInputStream;
 
@@ -6,7 +6,10 @@ import java.io.InputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import weather.entity.CurrentWeather;
+import javax.xml.ws.WebServiceException;
+
+import ku.weather.model.CurrentWeather;
+
 
 import net.webservicex.GlobalWeather;
 import net.webservicex.GlobalWeatherSoap;
@@ -25,7 +28,12 @@ public class WeatherController {
 	private Unmarshaller um;
 	
 	public WeatherController() {
-		gw = new GlobalWeather();
+		try {
+			gw = new GlobalWeather();
+		} catch (WebServiceException wse) {
+			throw new WebServiceException();
+		}
+		
 		gwp = gw.getGlobalWeatherSoap();
 		
 		try {

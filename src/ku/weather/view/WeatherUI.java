@@ -1,4 +1,4 @@
-package weather.client.view;
+package ku.weather.view;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -10,14 +10,19 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.xml.ws.WebServiceException;
 
-import weather.client.controller.WeatherController;
-import weather.entity.CurrentWeather;
+import ku.weather.controller.WeatherController;
+import ku.weather.model.CurrentWeather;
+
+import com.apple.eawt.Application;
+
 
 
 /**
@@ -29,6 +34,8 @@ import weather.entity.CurrentWeather;
 public class WeatherUI extends JFrame implements Runnable {
 
 	private WeatherController wc;
+	private Timer timer;
+	private boolean isTimeout;
 	private JTextField cityField;
 	private JTextField countryField;
 	private JLabel cityLabel;
@@ -37,6 +44,7 @@ public class WeatherUI extends JFrame implements Runnable {
 	private JTextArea textArea;
 	private JProgressBar progressBar;
 	private LoadWeather lw;
+	private JButton retryButton;
 	
 	public WeatherUI() {
 		super("Global Weather");
@@ -44,6 +52,7 @@ public class WeatherUI extends JFrame implements Runnable {
 		setPreferredSize(new Dimension(600,400));
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		setResizable(false);
+		isTimeout = false;
 		
 		initComponent();
 	}
@@ -65,6 +74,21 @@ public class WeatherUI extends JFrame implements Runnable {
 		countryContainer.add(countryLabel);
 		countryContainer.add(countryField);
 		
+		retryButton = new JButton("Retry");
+		retryButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if ( wc == null ) {
+					setWeatherService();
+				}
+				else {
+					setTextArea("Connected to service");
+				}
+			}
+			
+		});
+		
 		button = new JButton("Get Global Weather");
 		button.addActionListener(new ActionListener() {
 			
@@ -85,6 +109,7 @@ public class WeatherUI extends JFrame implements Runnable {
 		progressContainer.setLayout(new FlowLayout());
 		progressContainer.add(progressBar);
 		progressContainer.add(button);
+		progressContainer.add(retryButton);
 		
 		textArea = new JTextArea();
 		
@@ -104,6 +129,32 @@ public class WeatherUI extends JFrame implements Runnable {
 		this.wc = wc;
 	}
 	
+	public void setWeatherService() {
+		this.setTextArea("Connecting to service.");
+		progressBar.setValue(50);
+		try {
+			wc = new WeatherController();
+			this.setWeatherController(wc);
+			this.setTextArea("Connected to service.");
+			progressBar.setValue(0);
+		} catch ( WebServiceException wse) {
+			String[] buttonText = {"Retry","Cancel"};
+			int input = JOptionPane.showOptionDialog(null, 
+			        "Can't connect to service", 
+			        "WARNING", 
+			        JOptionPane.OK_CANCEL_OPTION, 
+			        JOptionPane.WARNING_MESSAGE, 
+			        null, 
+			        buttonText, // this is the array
+			        "default");
+			if ( input == 0 ) 
+				this.setWeatherService();
+			else if ( input == 1 ) 
+				System.exit(0);
+			progressBar.setValue(0);
+		}
+	}
+	
 	public void setTextArea(String text) {
 		this.textArea.setText(text);
 	}
@@ -120,7 +171,10 @@ public class WeatherUI extends JFrame implements Runnable {
 		
 		@Override
 		protected CurrentWeather doInBackground() throws Exception {
+			setTimeout(5000);
+			
 			progressBar.setValue(0);
+			
 			String cityName = cityField.getText().trim();
 			
 			String countryName = countryField.getText().trim();
@@ -131,6 +185,7 @@ public class WeatherUI extends JFrame implements Runnable {
 				try {
 					weather = wc.getGlobalWeather(cityName, countryName);
 				} catch ( WebServiceException wse ) {
+					wc = null;
 					weather = "No Internet Connection";
 					progressBar.setValue(0);
 					return null;
@@ -152,25 +207,32 @@ public class WeatherUI extends JFrame implements Runnable {
 
 		@Override
 		protected void done() {
+			timer.stop();
 			textArea.setText(weather);
+			progressBar.setValue(0);
 			super.done();
+		}
+		
+		private void setTimeout(int timeout) {
+			final LoadWeather load = this;
+			 timer = new Timer(timeout, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					isTimeout = true;
+					load.cancel(true);
+				}
+			});
+			timer.start();
 		}
 		
 	}
 	
 	public static void main(String[] args) {
 		WeatherUI wui = new WeatherUI();
-		WeatherController wc = null;
 		
-		try {
-			wc = new WeatherController();
-		} catch ( WebServiceException wse) {
-			wui.setTextArea("No internet connection");
-			wui.setEnabled(false);
-		}
-		
-		wui.setWeatherController(wc);
 		wui.run();
+		
+		wui.setWeatherService();
 	}
 
 }

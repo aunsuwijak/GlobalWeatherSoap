@@ -1,8 +1,9 @@
-package weather.client;
+package ku.weather.cmd;
 
 import java.util.Scanner;
 
-import weather.client.controller.WeatherController;
+import ku.weather.controller.WeatherController;
+
 
 
 /**

@@ -21,8 +21,6 @@ import javax.xml.ws.WebServiceException;
 import ku.weather.controller.WeatherController;
 import ku.weather.model.CurrentWeather;
 
-import com.apple.eawt.Application;
-
 
 
 /**
@@ -33,6 +31,10 @@ import com.apple.eawt.Application;
  */
 public class WeatherUI extends JFrame implements Runnable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1970626964837422475L;
 	private WeatherController wc;
 	private Timer timer;
 	private JTextField cityField;
@@ -147,7 +149,7 @@ public class WeatherUI extends JFrame implements Runnable {
 			        "Retry");
 			if ( input == 0 ) 
 				this.setWeatherService();
-			else if ( input == 1 ) 
+			else if ( input == 1 || input == -1 ) 
 				System.exit(0);
 			progressBar.setValue(0);
 		}
